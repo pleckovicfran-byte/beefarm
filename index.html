@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Honey Comb</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Inter,Arial,sans-serif;
+  background:#0b0d12;
+  color:#f5f5f5;
+}
+button,input,select{font:inherit}
+button{cursor:pointer}
+
+.container{
+  width:min(1100px,94%);
+  margin:auto;
+  padding:25px 0 50px;
+}
+
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:25px;
+}
+.logo{
+  font-size:25px;
+  font-weight:800;
+}
+.logo span{color:#f4b400}
+
+.wallet{
+  background:#151922;
+  border:1px solid #282d38;
+  padding:10px 15px;
+  border-radius:12px;
+  font-size:14px;
+}
+
+.hero{
+  background:linear-gradient(135deg,#171a22,#11131a);
+  border:1px solid #292e3a;
+  border-radius:22px;
+  padding:25px;
+  margin-bottom:18px;
+}
+
+.hero-title{
+  color:#9da5b5;
+  font-size:14px;
+}
+.hero-value{
+  font-size:38px;
+  font-weight:800;
+  margin-top:5px;
+}
+.earning{
+  color:#65d48b;
+  margin-top:8px;
+  font-size:15px;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+  margin-bottom:20px;
+}
+.stat{
+  background:#151922;
+  border:1px solid #292e38;
+  padding:18px;
+  border-radius:16px;
+}
+.stat small{color:#8d95a5}
+.stat strong{
+  display:block;
+  margin-top:7px;
+  font-size:21px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:18px;
+}
+
+.card{
+  background:#151922;
+  border:1px solid #292e38;
+  border-radius:18px;
+  padding:20px;
+}
+.card h2{
+  margin:0 0 15px;
+  font-size:19px;
+}
+.card p{
+  color:#949cac;
+  font-size:14px;
+}
+
+input,select{
+  width:100%;
+  background:#0e1117;
+  border:1px solid #303642;
+  color:white;
+  padding:13px;
+  border-radius:11px;
+  outline:none;
+  margin-top:8px;
+}
+input:focus,select:focus{
+  border-color:#f4b400;
+}
+
+label{
+  display:block;
+  margin-top:12px;
+  color:#aeb5c2;
+  font-size:13px;
+}
+
+button{
+  border:0;
+  border-radius:11px;
+  padding:12px 16px;
+  background:#f4b400;
+  color:#17130a;
+  font-weight:800;
+  margin-top:12px;
+}
+button:hover{filter:brightness(1.08)}
+
+.secondary{
+  background:#252a34;
+  color:white;
+}
+
+.bees{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+
+.bee{
+  background:#10131a;
+  border:1px solid #303642;
+  border-radius:15px;
+  padding:16px;
+}
+.bee-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.bee-icon{font-size:31px}
+.level{
+  color:#f4b400;
+  font-weight:800;
+}
+.bee-income{
+  margin-top:10px;
+  color:#65d48b;
+  font-size:13px;
+}
+
+.merge{
+  margin-top:15px;
+  padding-top:15px;
+  border-top:1px solid #292e38;
+}
+
+.tx{
+  border:1px solid #2b303a;
+  background:#10131a;
+  padding:14px;
+  border-radius:13px;
+  margin-top:10px;
+}
+.tx-head{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+}
+.pending{color:#f4b400}
+.success{color:#65d48b}
+.hash{
+  color:#7f899b;
+  font-size:11px;
+  word-break:break-all;
+  margin-top:7px;
+}
+
+.bonus{
+  background:rgba(244,180,0,.1);
+  border:1px solid rgba(244,180,0,.3);
+  padding:12px;
+  border-radius:12px;
+  margin-bottom:12px;
+  color:#ffd76a;
+}
+
+.address{
+  font-size:11px;
+  word-break:break-all;
+  color:#929aaa;
+  background:#0c0f14;
+  padding:10px;
+  border-radius:9px;
+  margin-top:8px;
+}
+
+@media(max-width:750px){
+  .grid,.stats,.bees{grid-template-columns:1fr}
+  .hero-value{font-size:31px}
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<header>
+  <div class="logo">🍯 Honey <span>Comb</span></div>
+  <div class="wallet">HC Wallet</div>
+</header>
+
+<section class="hero">
+  <div class="hero-title">Total Balance</div>
+  <div class="hero-value" id="balance">€0.00</div>
+  <div class="earning">
+    ⚡ Real Time Earning: <span id="realtime">€0.000000</span>
+  </div>
+</section>
+
+<div class="stats">
+  <div class="stat">
+    <small>Total Bees</small>
+    <strong id="beeCount">0</strong>
+  </div>
+  <div class="stat">
+    <small>Honey / minute</small>
+    <strong id="honeyMinute">0</strong>
+  </div>
+  <div class="stat">
+    <small>Farm Income / hour</small>
+    <strong id="hourIncome">€0.00</strong>
+  </div>
+</div>
+
+<div class="grid">
+
+<section class="card">
+<h2>🐝 My Bees</h2>
+<div class="bees" id="bees"></div>
+
+<div class="merge">
+  <strong>Merge Bees</strong>
+  <p>2 Bees Lv.1 → 1 Bee Lv.2</p>
+  <button id="mergeBtn">Merge Lv.1 + Lv.1</button>
+</div>
+
+<button id="buyBtn">Buy Bee — €3.00</button>
+</section>
+
+<section class="card">
+<h2>💳 Deposit</h2>
+
+<div class="bonus">
+  🎁 First Deposit Bonus: <b>+20%</b>
+</div>
+
+<label>Deposit amount (€)</label>
+<input id="depositAmount" type="number" min="0" step="0.01" placeholder="100.00">
+
+<button id="depositBtn">Deposit</button>
+
+<p id="depositInfo"></p>
+</section>
+
+<section class="card">
+<h2>📤 Withdraw</h2>
+
+<label>Currency</label>
+<select id="withdrawCurrency">
+  <option value="USDT">USDT</option>
+  <option value="USDC">USDC</option>
+  <option value="TRX">TRX</option>
+  <option value="BTC">BTC</option>
+  <option value="ETH">ETH</option>
+  <option value="SOL">SOL</option>
+</select>
+
+<label>How much € do you want to withdraw?</label>
+<input id="withdrawEUR" type="number" min="0" step="0.01" placeholder="10.00">
+
+<p>
+  Amount:
+  <strong id="withdrawCrypto">0.000000</strong>
+  <span id="currencyLabel">USDT</span>
+</p>
+
+<label>Withdrawal address</label>
+<input id="withdrawAddress" placeholder="Enter wallet address">
+
+<button id="withdrawBtn">Withdraw</button>
+</section>
+
+<section class="card">
+<h2>📜 Transactions</h2>
+<div id="transactions"></div>
+</section>
+
+</div>
+</div>
+
+<script>
+const STORAGE="honeyComb331_v1";
+
+let state=JSON.parse(localStorage.getItem(STORAGE)) || {
+  balance:0,
+  firstDeposit:true,
+  bees:[],
+  transactions:[],
+  earned:0
+};
+
+const prices={
+  USDT:1,
+  USDC:1,
+  TRX:0.34,
+  BTC:95000,
+  ETH:3500,
+  SOL:150
+};
+
+/*
+  Lv.1:
+  3 honey/min
+  €0.36/hour
+
+  Lv.2:
+  7 honey/sec
+*/
+
+function save(){
+  localStorage.setItem(STORAGE,JSON.stringify(state));
+}
+
+function money(n){
+  return "€"+Number(n).toFixed(2);
+}
+
+function randomHash(){
+  const chars="abcdef0123456789";
+  let h="";
+  for(let i=0;i<64;i++){
+    h+=chars[Math.floor(Math.random()*chars.length)];
+  }
+  return "0x"+h;
+}
+
+function beeIncome(){
+  let hourly=0;
+
+  state.bees.forEach(b=>{
+    if(b===1) hourly+=0.36;
+    if(b===2) hourly+=0.36*7*60/3;
+  });
+
+  return hourly;
+}
+
+function honeyPerMinute(){
+  let total=0;
+
+  state.bees.forEach(b=>{
+    if(b===1) total+=3;
+    if(b===2) total+=420;
+  });
+
+  return total;
+}
+
+function renderBees(){
+  const box=document.getElementById("bees");
+
+  if(!state.bees.length){
+    box.innerHTML='<p>No bees yet. Buy your first bee for €3.00.</p>';
+    return;
+  }
+
+  const lv1=state.bees.filter(x=>x===1).length;
+  const lv2=state.bees.filter(x=>x===2).length;
+
+  let html="";
+
+  if(lv1){
+    html+=`
+      <div class="bee">
+        <div class="bee-top">
+          <div class="bee-icon">🐝</div>
+          <div class="level">LV.1</div>
+        </div>
+        <strong>${lv1} bees</strong>
+        <div class="bee-income">3 honey/min each • €0.36/hour each</div>
+      </div>
+    `;
+  }
+
+  if(lv2){
+    html+=`
+      <div class="bee">
+        <div class="bee-top">
+          <div class="bee-icon">🐝🐝</div>
+          <div class="level">LV.2 MAX</div>
+        </div>
+        <strong>${lv2} bees</strong>
+        <div class="bee-income">7 honey/sec each</div>
+      </div>
+    `;
+  }
+
+  box.innerHTML=html;
+}
+
+function render(){
+  document.getElementById("balance").textContent=money(state.balance);
+
+  document.getElementById("beeCount").textContent=state.bees.length;
+
+  document.getElementById("honeyMinute").textContent=
+    honeyPerMinute().toLocaleString("hr-HR");
+
+  document.getElementById("hourIncome").textContent=
+    money(beeIncome());
+
+  renderBees();
+  renderTransactions();
+}
+
+function renderTransactions(){
+  const box=document.getElementById("transactions");
+
+  if(!state.transactions.length){
+    box.innerHTML="<p>No transactions yet.</p>";
+    return;
+  }
+
+  box.innerHTML=state.transactions
+    .slice()
+    .reverse()
+    .map(tx=>`
+      <div class="tx">
+        <div class="tx-head">
+          <strong>${tx.type}</strong>
+          <span class="${tx.status==="Successful"?"success":"pending"}">
+            ${tx.status==="Successful"?"✓ Successful":"🕐 Pending"}
+          </span>
+        </div>
+
+        <div>${tx.amount}</div>
+        <div class="hash">Hash: ${tx.hash}</div>
+
+        ${
+          tx.address
+          ? `<div class="address">Address: ${tx.address}</div>`
+          :""
+        }
+
+        <div style="font-size:11px;color:#727b8c;margin-top:7px">
+          ${tx.date}
+        </div>
+      </div>
+    `)
+    .join("");
+}
+
+document.getElementById("buyBtn").onclick=()=>{
+  if(state.balance<3){
+    alert("Nemaš dovoljno sredstava.");
+    return;
+  }
+
+  state.balance-=3;
+  state.bees.push(1);
+
+  state.transactions.push({
+    type:"Bee Purchase",
+    amount:"1× Bee Lv.1 — €3.00",
+    status:"Successful",
+    hash:randomHash(),
+    date:new Date().toLocaleString("hr-HR")
+  });
+
+  save();
+  render();
+};
+
+document.getElementById("mergeBtn").onclick=()=>{
+  const a=state.bees.indexOf(1);
+
+  if(a===-1){
+    alert("Trebaš dvije Lv.1 pčele.");
+    return;
+  }
+
+  state.bees.splice(a,1);
+
+  const b=state.bees.indexOf(1);
+
+  if(b===-1){
+    state.bees.push(1);
+    alert("Trebaš dvije Lv.1 pčele.");
+    return;
+  }
+
+  state.bees.splice(b,1);
+  state.bees.push(2);
+
+  state.transactions.push({
+    type:"Bee Merge",
+    amount:"2× Lv.1 → 1× Lv.2 MAX",
+    status:"Successful",
+    hash:randomHash(),
+    date:new Date().toLocaleString("hr-HR")
+  });
+
+  save();
+  render();
+};
+
+document.getElementById("depositBtn").onclick=()=>{
+  const amount=Number(document.getElementById("depositAmount").value);
+
+  if(!amount || amount<=0){
+    alert("Upiši iznos.");
+    return;
+  }
+
+  let bonus=0;
+
+  if(state.firstDeposit){
+    bonus=amount*0.20;
+    state.firstDeposit=false;
+  }
+
+  state.balance+=amount+bonus;
+
+  state.transactions.push({
+    type:"Deposit",
+    amount:`${money(amount)}${bonus?` + ${money(bonus)} bonus`:""}`,
+    status:"Successful",
+    hash:randomHash(),
+    date:new Date().toLocaleString("hr-HR")
+  });
+
+  document.getElementById("depositInfo").textContent=
+    bonus
+    ? `Deposit ${money(amount)} + ${money(bonus)} bonus`
+    : `Deposit ${money(amount)}`;
+
+  document.getElementById("depositAmount").value="";
+
+  save();
+  render();
+};
+
+function updateWithdraw(){
+  const eur=Number(document.getElementById("withdrawEUR").value)||0;
+  const currency=document.getElementById("withdrawCurrency").value;
+
+  const crypto=eur/prices[currency];
+
+  document.getElementById("withdrawCrypto").textContent=
+    crypto.toFixed(currency==="BTC"?8:6);
+
+  document.getElementById("currencyLabel").textContent=currency;
+}
+
+document.getElementById("withdrawEUR")
+.addEventListener("input",updateWithdraw);
+
+document.getElementById("withdrawCurrency")
+.addEventListener("change",updateWithdraw);
+
+document.getElementById("withdrawBtn").onclick=()=>{
+  const eur=Number(document.getElementById("withdrawEUR").value);
+  const currency=document.getElementById("withdrawCurrency").value;
+  const address=document.getElementById("withdrawAddress").value.trim();
+
+  if(!eur || eur<=0){
+    alert("Upiši iznos.");
+    return;
+  }
+
+  if(eur>state.balance){
+    alert("Nemaš dovoljno sredstava.");
+    return;
+  }
+
+  if(!address){
+    alert("Upiši adresu za povlačenje.");
+    return;
+  }
+
+  const crypto=eur/prices[currency];
+
+  state.balance-=eur;
+
+  state.transactions.push({
+    type:"Withdrawal",
+    amount:`${money(eur)} → ${crypto.toFixed(currency==="BTC"?8:6)} ${currency}`,
+    status:"Pending",
+    hash:randomHash(),
+    address:address,
+    date:new Date().toLocaleString("hr-HR")
+  });
+
+  document.getElementById("withdrawEUR").value="";
+  document.getElementById("withdrawAddress").value="";
+
+  save();
+  render();
+  updateWithdraw();
+};
+
+let lastTime=Date.now();
+
+setInterval(()=>{
+  const now=Date.now();
+  const seconds=(now-lastTime)/1000;
+  lastTime=now;
+
+  const incomePerSecond=beeIncome()/3600;
+  const earned=incomePerSecond*seconds;
+
+  state.balance+=earned;
+  state.earned+=earned;
+
+  document.getElementById("realtime").textContent=
+    money(state.earned);
+
+  document.getElementById("balance").textContent=
+    money(state.balance);
+
+  save();
+},1000);
+
+render();
+updateWithdraw();
+</script>
+</body>
+</html>
